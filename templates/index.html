@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+
+{% block title %} Home-- {% endblock %}
+
+
+{% block main %}
+<main>
+  <header class ="text-center">
+    <h1>بِسْمِ اللہِ الرَّحْمٰنِ الرَّحِیْم</h1>
+    <h1>رَبِّ اغْفِرْ لِي ذُنُوبِي وَافْتَحْ لِي أَبْوَابَ رَحْمَتِكَ</h1>
+    <h1>"O Lord, forgive my sins and open the doors of mercy for me"</h1>
+  </header>
+
+  <!--<button onclick="sayHello('{{name}}')">Say Hello</button>-->
+  <div class="container-fluid">
+    <table class="PrayerTimes">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Athan</th>
+          <th>Iqama</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for key in data %}
+          <tr>
+            <td>{{key.capitalize()}}</td>
+            <td>{{data[key][0]}}</td>
+            <td>{{data[key][1]}}</td>
+          </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+
+  </div>
+  </main>
+{% endblock%}

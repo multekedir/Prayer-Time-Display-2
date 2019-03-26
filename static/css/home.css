@@ -1,0 +1,66 @@
+
+body{
+  background-color: #0d6554;
+  margin: 0 auto;
+  padding: 15px;
+  width: 100%;
+  color: white;
+  font-family: 'Inconsolata', monospace;
+  font-weight: bold;
+  font-style: normal;
+}
+
+header h1{
+  font-size: 2vw;
+}
+
+
+.PrayerTimesWrapper {
+  width: 100%;
+}
+
+.PrayerTimes {
+  font-size: 4em;
+  text-align: right;
+  color: white;
+  padding-top: 75px;
+  width: 85%;
+}
+
+.PrayerTimes th {
+  font-weight: bolder;
+  font-size: 1em;
+  text-align: right;
+}
+
+.PrayerTimes th:last-child {
+  padding-left: 50px;
+}
+
+.PrayerTimes td,
+.PrayerTimes th {
+  margin: 150px;
+  padding-bottom: 10px;
+  font-size: 5vw;
+
+}
+
+.PrayerTimes th:first-child {
+  font-size: 4.5vw;
+  text-align: left;
+}
+
+
+
+.PrayerTimes td {
+  min-width: 100px;
+  font-size: 4.6vw;
+}
+
+.PrayerTimes td:last-child {
+  font-weight: bolder;
+}
+
+.PrayerTimes td:last-child.normal-text {
+  font-weight: normal;
+}
