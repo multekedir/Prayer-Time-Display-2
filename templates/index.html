@@ -7,6 +7,12 @@
 {% block main %}
 <main>
   <header class ="text-center">
+    <div class="pull-right">
+      {% if session['logged_in'] %}
+        <strong>Loged in as an admin</strong>
+        <a class="btn btn-primary btn-sm " href="{{url_for('logout')}}" class="button"> logout</a>
+      {% endif %}
+    </div>
     <h1>بِسْمِ اللہِ الرَّحْمٰنِ الرَّحِیْم</h1>
     <h1>رَبِّ اغْفِرْ لِي ذُنُوبِي وَافْتَحْ لِي أَبْوَابَ رَحْمَتِكَ</h1>
     <h1>"O Lord, forgive my sins and open the doors of mercy for me"</h1>

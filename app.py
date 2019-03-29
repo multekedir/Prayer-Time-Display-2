@@ -74,10 +74,11 @@ def do_admin_login():
     else:
         flash('wrong info!', category='login')
     return admin()
-@app.route('/signout')
-def signout():
+
+@app.route('/logout')
+def logout():
     session['logged_in'] = False
-    return index()
+    return redirect(url_for('index'))
 
 @app.route('/get', methods=['POST'])
 def get_data():

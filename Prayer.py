@@ -17,6 +17,7 @@ daylight_savings= 1
 
 prayTimes = pt.PrayTimes(calculation);
 
+
 def get_prayertime(prayer):
         """
         get the time of Athan from the prayer_api.py file.
