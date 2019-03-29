@@ -10,8 +10,8 @@ timeNames = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha']
 new_iqama = ['+1', '+0', '+0', '+0', '+60']
 
 
-longitude= 45.562015
-latitude= -122.865750
+longitude= 44.049950
+latitude= -123.121024
 calculation= 'ISNA'
 daylight_savings= 1
 
