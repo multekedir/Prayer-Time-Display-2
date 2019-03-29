@@ -48,7 +48,7 @@ $(document).ready(function() {
   getData();
   setInterval(function() {
   getData();
-}, 60000); //10000 milliseconds = 10 seconds
+}, 86400000); //10000 milliseconds = 10 seconds
 
 
 
