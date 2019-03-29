@@ -9,7 +9,8 @@ from collections import OrderedDict
 
 app = Flask(__name__)
 #socketio = SocketIO(app)
-app.config['DEBUG'] = True
+app.config['DEBUG'] = False
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 # thread = Thread()
 # thread_stop_event = Event()
@@ -73,6 +74,10 @@ def do_admin_login():
     else:
         flash('wrong info!', category='login')
     return admin()
+@app.route('/signout')
+def signout():
+    session['logged_in'] = False
+    return index()
 
 @app.route('/get', methods=['POST'])
 def get_data():
@@ -99,6 +104,6 @@ def get_data():
 #     print('Client disconnected')
 
 if __name__ == '__main__':
-    app.secret_key = os.urandom(12)
+
     app.run()
 #     socketio.run(app)

@@ -16,7 +16,7 @@
     </header>
 
     <form id="iqama" class="form-signin" action="/admin" method="POST">
-      <h2 class="form-signin-heading">Please Login</h2>
+      <h2 class="form-signin-heading">Please Enter Iqama Times</h2>
       {% for prayer in data %}
         <label class="form-signin-heading form_label" for="{{prayer}}">{{prayer.capitalize()}}</label>
         <input id="{{prayer}}" type="{{prayer}}" name="{{prayer}}" class="form-control" placeholder="+00" autofocus="" />
