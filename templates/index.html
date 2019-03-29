@@ -22,17 +22,14 @@
           <th>Iqama</th>
         </tr>
       </thead>
-      <tbody>
-        {% for key in data %}
-          <tr>
-            <td>{{key.capitalize()}}</td>
-            <td>{{data[key][0]}}</td>
-            <td>{{data[key][1]}}</td>
-          </tr>
-        {% endfor %}
-    </tbody>
+      <tbody id="prayer_table"> </tbody>
     </table>
 
   </div>
   </main>
 {% endblock%}
+
+{% block script %}
+<!--static js files static/js/-->
+<script src="{{ url_for('static', filename='js/home.js') }}"></script>
+ {% endblock %}

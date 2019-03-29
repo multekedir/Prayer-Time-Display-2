@@ -1,119 +1,104 @@
-from flask import Flask, url_for, render_template, request
-import praytimes as pt
-from datetime import date, datetime
+from flask import Flask, url_for, render_template, request, session, abort, flash, redirect, json,jsonify
+from threading import Thread, Event
+from time import sleep
+import Prayer as pt
+import os
+from collections import OrderedDict
+#from flask_socketio import SocketIO, emit
+
 
 app = Flask(__name__)
-#---------------------- prayTimes Object -----------------------
+#socketio = SocketIO(app)
+app.config['DEBUG'] = True
 
-
-longitude= 45.562015
-latitude= -122.865750
-calculation= 'ISNA'
-daylight_savings= 1
-
-prayTimes = pt.PrayTimes(calculation);
-
-def get_prayertime(prayer):
-        """
-        get the time of Athan from the prayer_api.py file.
-        Location is set to Eugene,OR. Can be changed by
-        adjusting the long, lat and elevation.
-        :param prayer: enter a prayer from one the list [fajr, sunrise, dhuhr, asr, maghrib, isha]
-        :param format: adjust time format in '12h' or '24h'
-        :return: Time of prayer
-        """
-
-
-        times = prayTimes.getTimes(date.today(), (longitude, latitude), -8, daylight_savings)
-
-        return datetime.strptime(times[prayer], "%H:%M").strftime("%I:%M %p")
-
-def cal_iqama_time(hour, difference):
-
-    """
-    Gets prayer time and split the string and add
-    the min to the prayer time.
-    If hour 11:50am and difference is 20 -> 12:10pm
-    :param hour: 11:50pm
-    :param difference: 20
-    :return: time in 12hr formats
-    """
-    #'05:34 AM'
-    period = hour[-2:]  # get the am and pm
-     # get the time
-     # hour = 05, min =34
-    hour, min = hour.strip('AM,PM, ').split(':')
-    iqama_min = int(min) + difference
-    # check if it is more than 59 min
-    if iqama_min >= 60:
-        iqama_min -= 60
-        iqama_hour = int(hour) + 1
-
-        if (len(str(iqama_min)) == 1):
-            #make it to 00:00 format
-            iqama_min = '0' + str(iqama_min)
-
-        if (len(str(iqama_hour)) == 1):
-            #make it to 00:00 format
-            iqama_hour = '0' + str(iqama_hour)
-
-        #check time change AM to PM and PM to AM
-        if hour == '11':
-            if period == "AM":
-                period = 'PM'
-            elif period == 'PM':
-                period = 'AM'
-
-        return str(iqama_hour) + ":" + str(iqama_min) + " "+ period
-    return str(hour) + ":" + str(iqama_min) +  " "+period
-
-def get_iqamatime(prayer, datain):
-
-    """
-    Check id input is a static or an addition.
-    user input can start with '+' or a static time '5:25 PM'
-    calls prayer_api.py
-    :return: static time ('4:30 PM') or adds the time from Athan api
-    """
-    time = get_prayertime(prayer)
-    if datain.startswith('+'):
-        datain.strip('+')
-        try:
-            datain = int(datain)
-        except ValueError:
-            print("Oops!  That was no valid number.  Try again...")
-        else:
-            iqama = cal_iqama_time(time,datain)
-            return iqama
-    elif (("pm" or "am" and ":" in datain) and (len(datain) > 6)):
-        return datain
-    return "ERROR"
-
-
-def map_prayerdata():
-    timeNames = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha']
-    new_iqama = ['+1', '+0', '+0', '+0', '+60']
-    p_times = list(map(get_prayertime,timeNames))
-    i_times = list(map(get_iqamatime, *(timeNames, new_iqama)))
-    print("Prayer TImes =", p_times)
-    print("Prayer TImes =", i_times)
-    data = dict(zip(timeNames, list(zip(p_times,i_times))))
-    print('Prayer Data = ',data)
-    return data
-
-
+# thread = Thread()
+# thread_stop_event = Event()
+#
+# class PrayerThread(Thread):
+#     def __init__(self):
+#         self.delay = 1
+#         super(PrayerThread, self).__init__()
+#
+#     def prayertimeGenerator(self):
+#         """
+#         Generate a random number every 1 second and emit to a socketio instance (broadcast)
+#         Ideally to be run in a separate thread?
+#         """
+#         #infinite loop of magical random numbers
+#         print("Making random numbers")
+#         while not thread_stop_event.isSet():
+#             data = pt.map_prayerdata()
+#             print("prayertimeGenerator =", data)
+#             socketio.emit('newdata', {'data': data}, namespace='/prayers')
+#             sleep(self.delay)
+#
+#     def run(self):
+#         self.prayertimeGenerator()
 
 @app.route("/")
-def hello():
-
+def index():
     print('Prayer Times for today in Eugene/Oregon\n' + ('=' * 41))
-    data= map_prayerdata()
     # prayTimes.setMethod('ISNA')
     # times = prayTimes.getTimes(date.today(), (, ), -8, dst=1);
     # for i in ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha', 'Midnight']:
     #     print(i + ': ' + times[i.lower()])
+    data = pt.map_prayerdata(url_for('static', filename='iqama.txt', _external=True))
     return render_template("index.html", data=data)
 
+@app.route("/admin")
+def admin():
+    if not session.get('logged_in'):
+        return render_template("login.html" )
+    else:
+        return render_template("admin.html", data=pt.timeNames)
+
+@app.route("/admin", methods=['POST'])
+def admin_post():
+    data_file = url_for('static', filename='iqama.txt', _external=True)
+    print("Reading from = ", pt.read_data(data_file))
+    if(not pt.save_data(request.form.get,pt.timeNames)):
+        flash("Please use HH:MM AM/PM or +59 format")
+    else:
+        pt.map_prayerdata(data_file)
+
+        return redirect(url_for('index'))
+    return admin()
+
+
+
+@app.route('/login', methods=['POST'])
+def do_admin_login():
+    if request.form['password'] == 'password' and request.form['username'] == 'admin':
+        session['logged_in'] = True
+    else:
+        flash('wrong info!', category='login')
+    return admin()
+
+@app.route('/get', methods=['POST'])
+def get_data():
+    # data = json.loads(, object_pairs_hook=OrderedDict)
+    send = jsonify(pt.map_prayerdata(url_for('static', filename='iqama.txt', _external=True)))
+    print("sending =", send)
+
+    return send
+
+# @socketio.on('connect', namespace='/prayers')
+# def test_connect():
+#     # need visibility of the global thread object
+#     global thread
+#     print('Client connected')
+#
+#     #Start the random number generator thread only if the thread has not been started before.
+#     if not thread.isAlive():
+#         print("Starting Thread")
+#         thread = PrayerThread()
+#         thread.start()
+#
+# @socketio.on('disconnect', namespace='/prayers')
+# def test_disconnect():
+#     print('Client disconnected')
+
 if __name__ == '__main__':
-    map_prayerdata()
-    app.run(debug=True)
+    app.secret_key = os.urandom(12)
+    app.run()
+#     socketio.run(app)
