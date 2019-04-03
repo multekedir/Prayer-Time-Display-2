@@ -3,15 +3,22 @@ from threading import Thread, Event
 from time import sleep
 import Prayer as pt
 import os
-from collections import OrderedDict
+from flask_caching import Cache
 
 
 app = Flask(__name__)
-#socketio = SocketIO(app)
 app.config['DEBUG'] = False
 app.secret_key = b'_5#y2L"F4Q8z\n\xeec]/'
+# Check Configuring Flask-Cache section for more details
+cache = Cache(config={'CACHE_TYPE': 'simple'})
+cache.init_app(app)
 prayer = pt.Prayer()
 
+def main():
+    cache.init_app(app, config=your_cache_config)
+
+    with app.app_context():
+        cache.clear()
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
