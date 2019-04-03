@@ -1,36 +1,66 @@
-
 <!DOCTYPE html>
 {% extends "base.html" %}
 
 {% block title %} Admin-- {% endblock %}
 
-{% block style %}<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">{% endblock %}
+{% block style %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">{% endblock %}
 
 {% block main %}
-  {% if session['logged_in'] %}
-  <main class="container">
-    <header class ="text-center">
-      <h1>بِسْمِ اللہِ الرَّحْمٰنِ الرَّحِیْم</h1>
-      <h1>رَبِّ اغْفِرْ لِي ذُنُوبِي وَافْتَحْ لِي أَبْوَابَ رَحْمَتِكَ</h1>
-      <h1>"O Lord, forgive my sins and open the doors of mercy for me"</h1>
-    </header>
+{% if session['logged_in'] %}
+<main class="container">
+  <header class="text-center">
+    <h1>بِسْمِ اللہِ الرَّحْمٰنِ الرَّحِیْم</h1>
+    <h1>رَبِّ اغْفِرْ لِي ذُنُوبِي وَافْتَحْ لِي أَبْوَابَ رَحْمَتِكَ</h1>
+    <h1>"O Lord, forgive my sins and open the doors of mercy for me"</h1>
+  </header>
 
-    <form id="iqama" class="form-signin" action="/admin" method="POST">
-      <h2 class="form-signin-heading">Please Enter Iqama Times</h2>
-      {% for prayer in data %}
-        <label class="form-signin-heading form_label" for="{{prayer}}">{{prayer.capitalize()}}</label>
-        <input id="{{prayer}}" type="{{prayer}}" name="{{prayer}}" class="form-control" placeholder="+00" autofocus="" />
+  <form id="iqama" class="form-signin" action="/admin" method="POST">
+    <h2 class="form-signin-heading">Please Enter Iqama Times</h2>
+    {% for prayer in data %}
+    <label class="form-signin-heading form_label" for="{{prayer}}">{{prayer.capitalize()}}</label>
+    <input id="{{prayer}}" type="{{prayer}}" name="{{prayer}}" class="form-control" value="{{defVals[prayer]}}"
+      autofocus="" />
+    {%endfor %}
+    {%- for message in get_flashed_messages() %}
+    <div class="alert alert-danger fade in">
+      <strong>Error!</strong> {{ message }}
+    </div>
+    {%- endfor %}
+    <button class="btn btn-primary btn-sm pull-right" type="submit" value="Log in">Submit</button>
+  </form>
+  </br>
+  <form id="setup" class="form-signin" action="/setup" method="POST">
+    <h2 class="form-signin-heading">Please Enter Iqama Times</h2>
+    <label class="form-signin-heading form_label" for="methods">Change Calculation Methods</label>
+    <select name="clac_method" id="methods">
+      {% for method in methods %}
+      <option value="{{method}}">{{method}}</option>
       {%endfor %}
-      {%- for message in get_flashed_messages() %}
-          <div class="alert alert-danger fade in">
-            <strong>Error!</strong> {{ message }}
-          </div>
-      {%- endfor %}
-      <button class="btn btn-primary btn-sm pull-right" type="submit" value="Log in">Submit</button>
-    </form>
+    </select>
 
-  </main>
-  {% else %}
-  <h1> hello</h1>
-  {% endif %}
-  {% endblock%}
+    </br>
+    </br>
+
+    <label class="form-signin-heading form_label" for="dayl">Daylight Savings</label>
+    <select name="savings" id="dayl">
+      <option value="1">On </option>
+      <option value="0">Off </option>
+    </select>
+
+    </br>
+
+
+
+    {%- for message in get_flashed_messages() %}
+    <div class="alert alert-danger fade in">
+      <strong>Error!</strong> {{ message }}
+    </div>
+    {%- endfor %}
+    <button class="btn btn-primary btn-sm pull-right" type="submit" value="Log in">Submit</button>
+  </form>
+</main>
+{% else %}
+<h1> hello</h1>
+{% endif %}
+{% endblock%}

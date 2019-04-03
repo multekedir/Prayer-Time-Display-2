@@ -92,7 +92,7 @@ class PrayTimes():
 
     #---------------------- Default Settings --------------------
 
-    calcMethod = 'MWL'
+    calcMethod = 'ISNA'
 
     # do not change anything here; use adjust method instead
     settings = {
@@ -120,7 +120,7 @@ class PrayTimes():
                     config['params'][name] = value
 
         # initialize settings
-        self.calcMethod = method if method in self.methods else 'MWL'
+        self.calcMethod = method if method in self.methods else calcMethod
         params = self.methods[self.calcMethod]['params']
         for name, value in params.items():
             self.settings[name] = value
