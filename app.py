@@ -8,7 +8,7 @@ from collections import OrderedDict
 
 app = Flask(__name__)
 #socketio = SocketIO(app)
-app.config['DEBUG'] = True
+app.config['DEBUG'] = False
 app.secret_key = b'_5#y2L"F4Q8z\n\xeec]/'
 prayer = pt.Prayer()
 
@@ -45,7 +45,7 @@ def admin_post():
         flash("Please use HH:MM AM/PM or +59 format")
     else:
         prayer.set_iqama(data_file)
-
+        cache.init_app(app)
         return redirect(url_for('index'))
     return admin()
 
