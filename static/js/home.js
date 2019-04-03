@@ -3,7 +3,7 @@ function jsUcfirst(string) {
 }
 function getData() {
   var timeNames = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'];
-  URL = 'http://' + document.domain + ':' + location.port + '/';
+  URL = 'https://' + document.domain + ':' + location.port + '/';
   var table_body = document.getElementById("prayer_table");
   while (table_body.firstChild) {
     table_body.removeChild(table_body.firstChild);
