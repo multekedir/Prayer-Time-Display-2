@@ -1,9 +1,20 @@
+
+$(document).ready(function () {
+
+  getData();
+  setInterval(function () {
+    getData();
+  }, 86400000); //86400000 milliseconds = 1 day
+});
+
+
 function jsUcfirst(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
 function getData() {
   var timeNames = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'];
-  URL = 'https://' + document.domain + ':' + location.port + '/';
+  URL = 'http://' + document.domain + ':' + location.port + '/';
   var table_body = document.getElementById("prayer_table");
   while (table_body.firstChild) {
     table_body.removeChild(table_body.firstChild);
@@ -42,10 +53,4 @@ function getData() {
   });
 }
 
-$(document).ready(function () {
 
-  getData();
-  setInterval(function () {
-    getData();
-  }, 86400000); //86400000 milliseconds = 1 day
-});

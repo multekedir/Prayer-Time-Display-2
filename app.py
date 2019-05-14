@@ -5,7 +5,6 @@ import Prayer as pt
 import os
 from flask_caching import Cache
 
-
 app = Flask(__name__)
 app.config['DEBUG'] = False
 app.secret_key = b'_5#y2L"F4Q8z\n\xeec]/'
@@ -14,18 +13,13 @@ cache = Cache(config={'CACHE_TYPE': 'simple'})
 cache.init_app(app)
 prayer = pt.Prayer()
 
-def main():
-    cache.init_app(app, config=your_cache_config)
-
-    with app.app_context():
-        cache.clear()
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
     data_file = url_for('static', filename='data/setup.txt', _external=True)
     iqama_file = url_for('static', filename='data/iqama.txt', _external=True)
     print('prayer Times for today in Eugene/Oregon\n' + ('=' * 41))
-    if (not prayer.is_setup):
+    if not prayer.is_setup:
         session['logged_in'] = False
         prayer.setup(data_file, iqama_file)
     data = prayer.map_prayerdata()
@@ -40,7 +34,8 @@ def admin():
         return render_template("login.html")
     else:
         print(prayer.get_difference())
-        return render_template("admin.html", data=prayer.timeNames, methods=prayer.get_claculation_methods(), defVals=prayer.get_difference())
+        return render_template("admin.html", data=prayer.timeNames, methods=prayer.get_claculation_methods(),
+                               defVals=prayer.get_difference())
 
 
 @app.route("/admin", methods=['POST'])
@@ -48,11 +43,10 @@ def admin_post():
     where = 'data/iqama.txt'
     data_file = url_for('static', filename=where, _external=True)
     print("Saving to = ", data_file)
-    if(not prayer.save_data(request.form.get, prayer.timeNames, where, True)):
+    if not prayer.save_data(request.form.get, prayer.timeNames, where, True):
         flash("Please use HH:MM AM/PM or +59 format")
     else:
         prayer.set_iqama(data_file)
-        cache.init_app(app)
         return redirect(url_for('index'))
     return admin()
 
@@ -83,5 +77,3 @@ def logout():
 
 if __name__ == '__main__':
     app.run()
-
-
