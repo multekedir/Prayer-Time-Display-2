@@ -1,0 +1,7 @@
+FLASK_ENV= 'development'
+DEBUG = False
+TESTING = False
+LONG=  44
+LAT = -123
+CALC = 'ISNA'
+NAMES = [ 'dhuhr', 'asr', 'maghrib', 'isha']

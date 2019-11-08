@@ -1,17 +1,17 @@
-from flask import Flask, url_for, render_template, request, session, abort, flash, redirect, json, jsonify
-from threading import Thread, Event
-from time import sleep
-import Prayer as pt
-import os
+from flask import Flask, url_for, render_template, request, session, flash, redirect, jsonify
 from flask_caching import Cache
 
+import Prayer as pt
+
 app = Flask(__name__)
-app.config['DEBUG'] = False
+app.config.from_envvar('SETTINGS')
+
 app.secret_key = b'_5#y2L"F4Q8z\n\xeec]/'
 # Check Configuring Flask-Cache section for more details
 cache = Cache(config={'CACHE_TYPE': 'simple'})
 cache.init_app(app)
-prayer = pt.Prayer()
+prayer = pt.Prayer(longitude=app.config['LONG'], latitude=app.config['LAT'])
+
 
 
 @app.route("/", methods=['GET', 'POST'])
@@ -33,7 +33,6 @@ def admin():
     if not session.get('logged_in'):
         return render_template("login.html")
     else:
-        print(prayer.get_difference())
         return render_template("admin.html", data=prayer.timeNames, methods=prayer.get_claculation_methods(),
                                defVals=prayer.get_difference())
 

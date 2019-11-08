@@ -1,7 +1,9 @@
-import praytimes as pt
-import requests
 import re
 from datetime import date, datetime
+
+import requests
+
+import praytimes as pt
 
 
 # ---------------------- prayTimes Object -----------------------
@@ -10,18 +12,22 @@ class Prayer:
 
     """
 
-    def __init__(self):
+    def __init__(self, timeNames=['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'],
+                 new_iqama=['+0', '+0', '+0', '+0', '+0'],
+                 longitude=44.849401,
+                 latitude=-123.240960,
+                 calculation='ISNA'):
         """
 
         """
 
         self.is_setup = False
-        self.timeNames = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha']
-        self.new_iqama = ['+0', '+0', '+0', '+0', '+0']
+        self.timeNames = timeNames
+        self.new_iqama = new_iqama
 
-        self.longitude = 44.849401
-        self.latitude = -123.240960
-        self.calculation = 'ISNA'
+        self.longitude = longitude
+        self.latitude = latitude
+        self.calculation = calculation
         self.daylight_savings = 1
         self.time_zone = -8
         self.prayTimes = pt.PrayTimes(self.calculation)
@@ -54,7 +60,7 @@ class Prayer:
 
     def setup(self, datafile, iqamafile):
         """
-        apply the cahnges from file to iqama time
+        apply the changes from file to iqama time
         :param datafile:
         :param iqamafile:
         :return:
