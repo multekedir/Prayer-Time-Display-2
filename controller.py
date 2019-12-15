@@ -1,5 +1,5 @@
 import re
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 import requests
 
@@ -12,10 +12,10 @@ class Prayer:
 
     """
 
-    def __init__(self, timeNames=['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'],
-                 new_iqama=['+0', '+0', '+0', '+0', '+0'],
-                 longitude=44.849401,
-                 latitude=-123.240960,
+    def __init__(self,
+                 timeNames = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'],
+                 new_iqama = ['+0', '+0', '+0', '+0', '+0'],
+                 longitude= -123.039307,  latitude=44.939018,
                  calculation='ISNA'):
         """
 
@@ -28,7 +28,7 @@ class Prayer:
         self.longitude = longitude
         self.latitude = latitude
         self.calculation = calculation
-        self.daylight_savings = 1
+        self.daylight_savings = 0
         self.time_zone = -8
         self.prayTimes = pt.PrayTimes(self.calculation)
 
@@ -52,7 +52,7 @@ class Prayer:
         self.longitude = longitude
         self.latitude = latitude
         self.calculation = calculation
-        self.daylight_savings = 1
+        self.daylight_savings = 0
         self.time_zone = time_zone
 
         self.prayTimes = pt.PrayTimes(self.calculation)
@@ -106,8 +106,7 @@ class Prayer:
             :return: Time of prayer
             """
 
-        times = self.prayTimes.getTimes(date.today(
-        ), (self.longitude, self.latitude), self.time_zone, int(self.daylight_savings), '24')
+        times = self.prayTimes.getTimes(date.today(), (self.latitude, self.longitude), timezone=self.time_zone, dst=int(self.daylight_savings), format='24h')
         return datetime.strptime(times[prayer], "%H:%M").strftime("%I:%M %p")
 
     @staticmethod
@@ -219,38 +218,15 @@ class Prayer:
         Gets prayer time and split the string and add
         the min to the prayer time.
         If hour 11:50am and difference is 20 -> 12:10pm
-        :param hour: 11:50pm
+        :param hour: 11:50 pm
         :param difference: 20
         :return: time in 12hr formats
         """
-        # '05:34 AM'
-        period = hour[-2:]  # get the am and pm
-        # get the time
-        # hour = 05, min =34
-        hour, min = hour.strip('AM,PM, ').split(':')
-        iqama_min = int(min) + difference
-        # check if it is more than 59 min
-        if iqama_min >= 60:
-            iqama_min -= 60
-            iqama_hour = int(hour) + 1
+        # covert hour to datetime object
+        date_time_obj = datetime.strptime(hour, '%I:%M %p')
+        # add time change using timedelta
+        return datetime.strftime((date_time_obj + timedelta(minutes=difference)), "%I:%M %p")
 
-            if len(str(iqama_min)) == 1:
-                # make it to 00:00 format
-                iqama_min = '0' + str(iqama_min)
-
-            if len(str(iqama_hour)) == 1:
-                # make it to 00:00 format
-                iqama_hour = '0' + str(iqama_hour)
-
-            # check time change AM to PM and PM to AM
-            if hour == '11':
-                if period == "AM":
-                    period = 'PM'
-                elif period == 'PM':
-                    period = 'AM'
-
-            return str(iqama_hour) + ":" + str(iqama_min) + " " + period
-        return str(hour) + ":" + str(iqama_min) + " " + period
 
     def get_claculation_methods(self):
         """

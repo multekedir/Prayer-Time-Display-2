@@ -1,7 +1,7 @@
 from flask import Flask, url_for, render_template, request, session, flash, redirect, jsonify
 from flask_caching import Cache
 
-import Prayer as pt
+import controller as pt
 
 app = Flask(__name__)
 app.config.from_envvar('SETTINGS')

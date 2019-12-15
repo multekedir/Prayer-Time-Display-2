@@ -42,7 +42,7 @@ From Khabib Murtuzaaliev(skeeph):
 
 #----------------------- PrayTimes Class ------------------------
 
-class PrayTimes():
+class PrayTimes:
     #------------------------ Constants --------------------------
 
     # Time Names
