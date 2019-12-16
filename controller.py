@@ -1,7 +1,9 @@
 import re
 from datetime import date, datetime, timedelta
+import json
 
 import requests
+from flask import url_for
 
 import praytimes as pt
 
@@ -12,62 +14,19 @@ class Prayer:
 
     """
 
-    def __init__(self,
-                 timeNames = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'],
-                 new_iqama = ['+0', '+0', '+0', '+0', '+0'],
-                 longitude= -123.039307,  latitude=44.939018,
-                 calculation='ISNA'):
-        """
+    def __init__(self):
 
-        """
-
-        self.is_setup = False
-        self.timeNames = timeNames
-        self.new_iqama = new_iqama
-
-        self.longitude = longitude
-        self.latitude = latitude
-        self.calculation = calculation
-        self.daylight_savings = 0
-        self.time_zone = -8
+        data = self.read_data()
+        self.timeNames = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha']
+        self.longitude = data['longitude']
+        self.latitude = data['latitude']
+        self.calculation = data['calculation']
+        self.daylight_savings = data['dst']
+        self.time_zone = data['time_zone']
         self.prayTimes = pt.PrayTimes(self.calculation)
 
         self.prayTimes.setMethod(self.calculation)
 
-    def new_data(self, timeNames, longitude, latitude, calculation, time_zone,
-                 new_iqama=['+0', '+0', '+0', '+0', '+0']):
-        """
-
-        :param timeNames:
-        :param longitude:
-        :param latitude:
-        :param calculation:
-        :param time_zone:
-        :param new_iqama:
-        """
-        self.is_setup = False
-        self.timeNames = timeNames
-        self.new_iqama = new_iqama
-
-        self.longitude = longitude
-        self.latitude = latitude
-        self.calculation = calculation
-        self.daylight_savings = 0
-        self.time_zone = time_zone
-
-        self.prayTimes = pt.PrayTimes(self.calculation)
-        self.prayTimes.setMethod(self.calculation)
-
-    def setup(self, datafile, iqamafile):
-        """
-        apply the changes from file to iqama time
-        :param datafile:
-        :param iqamafile:
-        :return:
-        """
-        self.is_setup = True
-        self.change_setup(*(self.read_data(datafile)))
-        self.set_iqama(iqamafile)
 
     def __str__(self):
 
@@ -78,51 +37,11 @@ class Prayer:
         return "longitude, %s. latitude %s. calculation %s. daylight_savings %s. time_zone %s." % (
             self.longitude, self.latitude, self.calculation, self.daylight_savings, self.time_zone)
 
-    def __iter__(self):
-        p_times = list(map(self.get_prayertime, self.timeNames))
-        i_times = list(
-            map(self.get_iqamatime, *(self.timeNames, self.new_iqama)))
-        for prayer, iqama in (p_times, i_times):
-            yield [prayer, iqama]
-
-    def change_setup(self, calculation, daylight_savings):
-        """
-        make changes to calculation method and daylight_savings
-        :param calculation: str
-        :param daylight_savings: int
-        :return: None
-        """
-        self.calculation = calculation
-        self.daylight_savings = daylight_savings
-        self.prayTimes.setMethod(calculation)
-
-    def get_prayertime(self, prayer):
-        """
-            get the time of Athan from the prayer_api.py file.
-            Location is set to Eugene,OR. Can be changed by
-            adjusting the long, lat and elevation.
-            :param prayer: enter a prayer from one the list [fajr, sunrise, dhuhr, asr, maghrib, isha]
-            :param format: adjust time format in '12h' or '24h'
-            :return: Time of prayer
-            """
-
-        times = self.prayTimes.getTimes(date.today(), (self.latitude, self.longitude), timezone=self.time_zone, dst=int(self.daylight_savings), format='24h')
-        return datetime.strptime(times[prayer], "%H:%M").strftime("%I:%M %p")
-
     @staticmethod
-    def read_data(url):
-        """
-        reads file data and store it in array
-        :param url: file location
-        :return: str
-        """
-        # print("Data file url =", url)
-        new_data = []
-        r = requests.get(url, stream=True)
-        for line in r.iter_lines():
-            if line:
-                new_data.append(str(line.decode('utf-8')).rstrip('\n'))
-        return new_data
+    def read_data():
+        with open('./static/data/data.json', 'r') as json_file:
+            data = json.load(json_file)
+        return dict(data)
 
     @staticmethod
     def write(func, names, filename):
@@ -184,6 +103,30 @@ class Prayer:
             # print("Valid check =", result)
         return all(result) and len(result) == 5
 
+    def change_setup(self, calculation, daylight_savings):
+        """
+        make changes to calculation method and daylight_savings
+        :param calculation: str
+        :param daylight_savings: int
+        :return: None
+        """
+        self.daylight_savings = daylight_savings
+        self.prayTimes = pt.PrayTimes(calculation)
+
+
+    def get_prayertime(self, prayer):
+        """
+            get the time of Athan from the prayer_api.py file.
+            Location is set to Eugene,OR. Can be changed by
+            adjusting the long, lat and elevation.
+            :param prayer: enter a prayer from one the list [fajr, sunrise, dhuhr, asr, maghrib, isha]
+            :param format : adjust time format in '12h' or '24h'
+            :return: Time of prayer
+            """
+
+        times = self.prayTimes.getTimes(date.today(), (self.latitude, self.longitude), timezone=self.time_zone, dst=int(self.daylight_savings), format='24h')
+        return datetime.strptime(times[prayer], "%H:%M").strftime("%I:%M %p")
+
     def save_data(self, func, names, filename, check):
         """
         collects the nessarey data from user and save the changes.
@@ -203,17 +146,34 @@ class Prayer:
             return True
         return False
 
-    def set_iqama(self, url):
+    def update_data(self, data, key):
+        """
+        collects the nessarey data from user and save the changes.
+
+        :param func: data function
+        :param names: prayer time names
+        :param filename: name of file you want to change
+        :param check: True if file need to be validated
+        :return: True if file is saves
+        """
+        current = self.read_data()
+        current[key] =  data
+        print(current)
+        with open('./static/data/data.json', 'w') as outfile:
+            json.dump(current, outfile)
+
+        return True
+
+    def get_new_iqama(self):
         """
         read from file and set the adjustment
         :param url: Path for iqama adjustment
         :return: None
         """
-        # print("Iqama Data from file =", self.read_data(url))
+        return self.read_data()['iqama']
 
-        self.new_iqama = self.read_data(url)
-
-    def cal_iqama_time(self, hour, difference):
+    @staticmethod
+    def apply_difference(hour, difference):
         """
         Gets prayer time and split the string and add
         the min to the prayer time.
@@ -228,14 +188,14 @@ class Prayer:
         return datetime.strftime((date_time_obj + timedelta(minutes=difference)), "%I:%M %p")
 
 
-    def get_claculation_methods(self):
+    def get_calculation_methods(self):
         """
-        gets curent prayer method
+        gets current prayer method
         :return: str
         """
         return [p for p in self.prayTimes.methods]
 
-    def get_iqamatime(self, prayer, datain):
+    def get_iqama_time(self, prayer, datain):
         """
         Check id input is a static or an addition.
         user input can start with '+' or a static time '5:25 PM'
@@ -250,10 +210,11 @@ class Prayer:
                 datain = int(datain)
             except ValueError:
                 print("Oops!  That was no valid number.  Try again...")
+                raise ValueError
             else:
-                iqama = self.cal_iqama_time(time, datain)
-                return iqama
-        elif (("pm" or "am" and ":" in datain) and (len(datain) > 6)):
+                return self.apply_difference(time, datain)
+
+        elif ("pm" or "am" and ":" in datain) and (len(datain) > 6):
             return datain
         return "ERROR"
 
@@ -266,15 +227,16 @@ class Prayer:
         print("Prayer zone =", self.time_zone)
         print('*' * 100)
 
-    def map_prayerdata(self):
+    def map_prayer_data(self):
+        difference = self.get_new_iqama()
         p_times = list(map(self.get_prayertime, self.timeNames))
         i_times = list(
-            map(self.get_iqamatime, *(self.timeNames, self.new_iqama)))
+            map(self.get_iqama_time, *(self.timeNames, difference)))
         print('*' * 100)
         print(self)
         print("Prayer Times =", p_times)
         print("Iqama Times =", i_times)
-        print("change =", self.new_iqama)
+        print("change =", difference)
         data = dict(zip(self.timeNames, list(zip(p_times, i_times))))
         print('Prayer Data = ', data)
         print('*' * 100)
@@ -285,4 +247,4 @@ class Prayer:
         gets all the iqama changes
         :return: dict
         """
-        return dict(zip(self.timeNames, self.new_iqama))
+        return dict(zip(self.timeNames, self.get_new_iqama()))

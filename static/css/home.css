@@ -64,3 +64,59 @@ header h1{
 .PrayerTimes td:last-child.normal-text {
   font-weight: normal;
 }
+* {
+    box-sizing: border-box;
+}
+.mySlides {
+    display: none;
+}
+
+img {
+    height: 98vh;
+    max-width: 100%;
+}
+
+/* Slideshow container */
+.slideshow-container {
+    max-width: 100%;
+    max-width: 100%;
+}
+
+.active {
+    background-color: #717171;
+}
+
+/* Fading animation */
+.fade {
+    -webkit-animation-name: fade;
+    -webkit-animation-duration: 9.5s;
+    animation-name: fade;
+    animation-duration: 9.5s;
+}
+
+@-webkit-keyframes fade {
+    from {
+        opacity: .4
+    }
+
+    to {
+        opacity: 1
+    }
+}
+
+@keyframes fade {
+    from {
+        opacity: .4
+    }
+
+    to {
+        opacity: 1
+    }
+}
+
+/* On smaller screens, decrease text size */
+@media only screen and (max-width: 300px) {
+    .text {
+        font-size: 11px
+    }
+}

@@ -10,44 +10,40 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xeec]/'
 # Check Configuring Flask-Cache section for more details
 cache = Cache(config={'CACHE_TYPE': 'simple'})
 cache.init_app(app)
-prayer = pt.Prayer(longitude=app.config['LONG'], latitude=app.config['LAT'])
+prayer = pt.Prayer()
 
 
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
-    data_file = url_for('static', filename='data/setup.txt', _external=True)
-    iqama_file = url_for('static', filename='data/iqama.txt', _external=True)
     print('prayer Times for today in Eugene/Oregon\n' + ('=' * 41))
-    if not prayer.is_setup:
-        session['logged_in'] = False
-        prayer.setup(data_file, iqama_file)
-    data = prayer.map_prayerdata()
+    data = prayer.map_prayer_data()
     if request.method == 'POST':
         return jsonify(data)
     return render_template("index.html", data=data)
 
 
-@app.route("/admin")
+@app.route("/admin",methods=['GET'])
 def admin():
     if not session.get('logged_in'):
         return render_template("login.html")
     else:
-        return render_template("admin.html", data=prayer.timeNames, methods=prayer.get_claculation_methods(),
-                               defVals=prayer.get_difference())
+        return render_template("admin.html", data=prayer.timeNames, methods=prayer.get_calculation_methods(),
+                               payload=prayer.read_data())
 
 
-@app.route("/admin", methods=['POST'])
-def admin_post():
-    where = 'data/iqama.txt'
-    data_file = url_for('static', filename=where, _external=True)
-    print("Saving to = ", data_file)
-    if not prayer.save_data(request.form.get, prayer.timeNames, where, True):
-        flash("Please use HH:MM AM/PM or +59 format")
-    else:
-        prayer.set_iqama(data_file)
+@app.route("/update_iqama", methods=['POST'])
+def update_iqama():
+    print('Iqama Changed')
+    payload = [request.form.get(i) for i in prayer.timeNames]
+    if prayer.validate(payload):
+        prayer.update_data(payload, 'iqama')
         return redirect(url_for('index'))
+    else:
+        flash("Please use HH:MM AM/PM or +59 format")
     return admin()
+
+
 
 
 @app.route('/setup', methods=['POST'])
@@ -59,8 +55,10 @@ def do_setup():
     return redirect(url_for('index'))
 
 
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def do_admin_login():
+    if request.method == 'GET':
+        return redirect(url_for('admin'))
     if request.form['password'] == 'password' and request.form['username'] == 'admin':
         session['logged_in'] = True
     else:
