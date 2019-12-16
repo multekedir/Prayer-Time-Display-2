@@ -1,3 +1,4 @@
+{% from "macros.html" import prayer_table with context %}
 <!DOCTYPE html>
 {% extends "base.html" %}
 
@@ -6,37 +7,28 @@
 
 {% block main %}
 <main>
-  <header class ="text-center">
-    <div class="pull-right">
-      {% if session['logged_in'] %}
-        <strong>Loged in as an admin</strong>
-        <a class="btn btn-primary btn-sm " href="{{url_for('logout')}}" class="button"> logout</a>
-      {% endif %}
-    </div>
-    <h1>بِسْمِ اللہِ الرَّحْمٰنِ الرَّحِیْم</h1>
-    <h1>رَبِّ اغْفِرْ لِي ذُنُوبِي وَافْتَحْ لِي أَبْوَابَ رَحْمَتِكَ</h1>
-    <h1>"O Lord, forgive my sins and open the doors of mercy for me"</h1>
-  </header>
+    {{ prayer_table() }}
+{#    <div class="slideshow-container">#}
+{##}
+{#        <div class="mySlides fade">#}
+{#            <img src="{{ url_for('static', filename='images/full.jpg') }}">#}
+{#        </div>#}
+{##}
+{#        <div class="mySlides fade">#}
+{#            <img src="{{ url_for('static', filename='images/concert_poster.png') }}">#}
+{#        </div>#}
+{##}
+{#        <div class="mySlides fade">#}
+{#            {{ prayer_table() }}#}
+{#        </div>#}
+{#        #}
+{#    </div>#}
 
-  <div class="container-fluid">
-    <table class="PrayerTimes">
-      <thead>
-        <tr>
-          <th></th>
-          <th>Athan</th>
-          <th>Iqama</th>
-        </tr>
-      </thead>
-      <tbody id="prayer_table">
-
-      </tbody>
-    </table>
-
-  </div>
-  </main>
-{% endblock%}
+    
+</main>
+{% endblock %}
 
 {% block script %}
-<!--static js files static/js/-->
-<script src="{{ url_for('static', filename='js/home.js') }}"></script>
- {% endblock %}
+    <!--static js files static/js/-->
+    <script src="{{ url_for('static', filename='js/home.js') }}"></script>
+{% endblock %}

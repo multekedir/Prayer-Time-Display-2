@@ -1,5 +1,6 @@
 import re
 from datetime import date, datetime, timedelta
+import  pytz
 import json
 
 import requests
@@ -36,6 +37,12 @@ class Prayer:
     def __repr__(self):
         return "longitude, %s. latitude %s. calculation %s. daylight_savings %s. time_zone %s." % (
             self.longitude, self.latitude, self.calculation, self.daylight_savings, self.time_zone)
+
+    @staticmethod
+    def is_dst(zone_name):
+        tz = pytz.timezone(zone_name)
+        now = pytz.utc.localize(datetime.utcnow())
+        return 1 if now.astimezone(tz).dst() != timedelta(0) is True else 0
 
     @staticmethod
     def read_data():
@@ -124,7 +131,7 @@ class Prayer:
             :return: Time of prayer
             """
 
-        times = self.prayTimes.getTimes(date.today(), (self.latitude, self.longitude), timezone=self.time_zone, dst=int(self.daylight_savings), format='24h')
+        times = self.prayTimes.getTimes(date.today(), (self.latitude, self.longitude), timezone=self.time_zone, dst=self.is_dst('US/Pacific'), format='24h')
         return datetime.strptime(times[prayer], "%H:%M").strftime("%I:%M %p")
 
     def save_data(self, func, names, filename, check):

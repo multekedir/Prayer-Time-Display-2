@@ -46,12 +46,12 @@ def update_iqama():
 
 
 
-@app.route('/setup', methods=['POST'])
+@app.route('/update_setup', methods=['POST'])
 def do_setup():
-    data_file = url_for('static', filename='data/setup.txt', _external=True)
-    get = ["clac_method", "savings"]
-    prayer.save_data(request.form.get, get, 'data/setup.txt', False)
-    prayer.change_setup(*(prayer.read_data(data_file)))
+    # data_file = url_for('static', filename='data/setup.txt', _external=True)
+    # get = ["clac_method", "savings"]
+    # prayer.save_data(request.form.get, get, 'data/setup.txt', False)
+    # prayer.change_setup(*(prayer.read_data(data_file)))
     return redirect(url_for('index'))
 
 

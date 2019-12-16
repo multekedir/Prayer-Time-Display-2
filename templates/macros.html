@@ -1,0 +1,30 @@
+
+{% macro prayer_table() %}
+      <header class ="text-center">
+    <div class="pull-right">
+      {% if session['logged_in'] %}
+        <strong>Loged in as an admin</strong>
+        <a class="btn btn-primary btn-sm " href="{{url_for('logout')}}" class="button"> logout</a>
+      {% endif %}
+    </div>
+    <h1>بِسْمِ اللہِ الرَّحْمٰنِ الرَّحِیْم</h1>
+    <h1>رَبِّ اغْفِرْ لِي ذُنُوبِي وَافْتَحْ لِي أَبْوَابَ رَحْمَتِكَ</h1>
+    <h1>"O Lord, forgive my sins and open the doors of mercy for me"</h1>
+  </header>
+
+  <div class="container-fluid">
+    <table class="PrayerTimes">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Athan</th>
+          <th>Iqama</th>
+        </tr>
+      </thead>
+      <tbody id="prayer_table">
+
+      </tbody>
+    </table>
+
+  </div>
+{% endmacro %}
