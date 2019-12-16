@@ -48,10 +48,10 @@ def update_iqama():
 
 @app.route('/update_setup', methods=['POST'])
 def do_setup():
-    # data_file = url_for('static', filename='data/setup.txt', _external=True)
-    # get = ["clac_method", "savings"]
-    # prayer.save_data(request.form.get, get, 'data/setup.txt', False)
-    # prayer.change_setup(*(prayer.read_data(data_file)))
+    prayer.update_data(request.form.get('clac_method'), 'calculation')
+    prayer.update_data(float(request.form.get('latitude')), 'latitude')
+    prayer.update_data(float(request.form.get('longitude')), 'longitude')
+    prayer.update_data(int(request.form.get('time_zone')), 'time_zone')
     return redirect(url_for('index'))
 
 

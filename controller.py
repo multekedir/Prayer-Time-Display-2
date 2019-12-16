@@ -1,10 +1,8 @@
 import re
 from datetime import date, datetime, timedelta
-import  pytz
-import json
 
-import requests
-from flask import url_for
+import json
+import pytz
 
 import praytimes as pt
 
@@ -25,8 +23,7 @@ class Prayer:
         self.daylight_savings = data['dst']
         self.time_zone = data['time_zone']
         self.prayTimes = pt.PrayTimes(self.calculation)
-
-        self.prayTimes.setMethod(self.calculation)
+        self.new_data_applied = True
 
 
     def __str__(self):
@@ -130,8 +127,10 @@ class Prayer:
             :param format : adjust time format in '12h' or '24h'
             :return: Time of prayer
             """
-
-        times = self.prayTimes.getTimes(date.today(), (self.latitude, self.longitude), timezone=self.time_zone, dst=self.is_dst('US/Pacific'), format='24h')
+        if self.new_data_applied is False:
+            self.apply_new_data()
+        times = self.prayTimes.getTimes(date.today(), (float(self.latitude), float(self.longitude)),
+                                        timezone=self.time_zone, dst=self.is_dst('US/Pacific'), format='24h')
         return datetime.strptime(times[prayer], "%H:%M").strftime("%I:%M %p")
 
     def save_data(self, func, names, filename, check):
@@ -164,11 +163,13 @@ class Prayer:
         :return: True if file is saves
         """
         current = self.read_data()
-        current[key] =  data
+        current[key] = data
         print(current)
         with open('./static/data/data.json', 'w') as outfile:
             json.dump(current, outfile)
 
+        self.prayTimes = pt.PrayTimes(self.calculation)
+        self.new_data_applied = False
         return True
 
     def get_new_iqama(self):
@@ -194,6 +195,15 @@ class Prayer:
         # add time change using timedelta
         return datetime.strftime((date_time_obj + timedelta(minutes=difference)), "%I:%M %p")
 
+    def apply_new_data(self):
+        data = self.read_data()
+        self.longitude = data['longitude']
+        self.latitude = data['latitude']
+        self.calculation = data['calculation']
+        self.daylight_savings = data['dst']
+        self.time_zone = data['time_zone']
+
+        self.new_data_applied = True
 
     def get_calculation_methods(self):
         """

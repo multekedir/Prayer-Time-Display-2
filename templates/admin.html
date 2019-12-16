@@ -18,7 +18,7 @@
             <form id="iqama" class="form-signin" action="/update_iqama" method="POST">
                 <h2 class="form-signin-heading">Please Enter Iqama Times</h2>
                 {% for i in range(data | length) %}
-                    <label class="form-signin-heading form_label" for="{{ data[i] }}">{{data[i].capitalize() }}</label>
+                    <label class="form-signin-heading form_label" for="{{ data[i] }}">{{ data[i].capitalize() }}</label>
                     <input id="{{ data[i] }}" type="{{ data[i] }}" name="{{ data[i] }}" class="form-control"
                            value="{{ payload['iqama'][i] }}"
                            autofocus=""/>
@@ -35,33 +35,44 @@
                 <h2 class="form-signin-heading">Please Enter Calculation Method</h2>
                 <div class="row">
                     <div class="form-group col-xs-6">
-                        <label class="form-signin-heading form_label" for="latitude">Latitude</label>
-                        <input id="latitude" type="latitude" name="latitude" class="form-control"
-                               value="{{ payload['latitude'] }}" autofocus=""/>
+                        <label class="form-signin-heading form_label" for="latitude" required>Latitude</label>
+                        <input id="latitude" type="number" name="latitude" class="form-control"
+                               value="{{ payload['latitude'] }}" type="number" step=any required step=any autofocus/>
                     </div>
 
                     <div class="form-group col-xs-6">
                         <label class="form-signin-heading form_label" for="longitude">Longitude</label>
-                        <input id="latitude" type="latitude" name="latitude" class="form-control"
-                               value="{{ payload['longitude'] }}" autofocus=""/>
+                        <input id="longitude" name="longitude" class="form-control"
+                               value="{{ payload['longitude'] }}" type="number" step=any required autofocus>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="form-group col-xs-6">
+                        <label class="form-signin-heading form_label" for="methods">Change Calculation
+                            Methods</label>
+                        </br>
+                        <select class="form-control" name="clac_method" id="methods" autofocus>
+                            {% for method in methods %}
+                                {% if payload['calculation'] == method %}
+                                    <option value="{{ method }}" selected>{{ method }}</option>
+                                {% else %}
+                                    <option value="{{ method }}">{{ method }}</option>
+                                {% endif %}
 
-                <label class="form-signin-heading form_label" for="methods">Change Calculation Methods</label>
-                <select name="clac_method" id="methods">
-                    {% for method in methods %}
-                        <option value="{{ method }}">{{ method }}</option>
-                    {% endfor %}
-                </select>
 
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group col-xs-6">
+                        <label class="form-signin-heading form_label" for="time_zone">Time Zone</label>
+                        <input id="time_zone" name="time_zone" class="form-control"
+                               value="{{ payload['time_zone'] }}" type="number" step=1 required autofocus/>
+                    </div>
+                </div>
                 </br>
                 </br>
 
-                <label class="form-signin-heading form_label" for="dayl">Daylight Savings</label>
-                <select name="savings" id="dayl">
-                    <option value="1">On</option>
-                    <option value="0">Off</option>
-                </select>
 
                 </br>
 
