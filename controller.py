@@ -73,6 +73,8 @@ class Prayer:
         """
         if len(data) == 2:
             return bool(re.match("\+[0-9]", data))
+        elif len(data) > 3:
+            return False
         else:
             return bool(re.match("\+([0-5])([0-9])", data))
 
@@ -227,7 +229,6 @@ class Prayer:
                 datain = int(datain)
             except ValueError:
                 print("Oops!  That was no valid number.  Try again...")
-                raise ValueError
             else:
                 return self.apply_difference(time, datain)
 
