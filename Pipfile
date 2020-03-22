@@ -7,9 +7,8 @@ verify_ssl = true
 
 [packages]
 flask = "*"
-requests = "*"
 flask-caching = "*"
-json-extensions = "*"
+pytz = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.8"
