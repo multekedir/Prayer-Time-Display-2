@@ -2,4 +2,5 @@
 
 clear
 export SETTINGS=./dev.settings
-python3.7 -m flask run
+python3 -m flask run
+
