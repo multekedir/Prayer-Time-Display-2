@@ -18,15 +18,17 @@ PrayerTime Display is a Web app used to display prayertimes on big screen using 
 * [Docker](https://docs.docker.com/get-started/) - virtual environment manager
 
 ### Installation
+ 1. Download the app
+     ```sh
+    $ git clone https://github.com/multekedir/Prayer-Time-Display-2.git$ 
+    ```
+2. Install Docker -> watch this [vedio](https://www.youtube.com/watch?v=TDLKQWsrSyk)
+3.      
+    ```sh
+    $ cd Prayer-Time-Display-2
+    ```
+4. 
 
 
-
-```sh
-$ git clone https://github.com/multekedir/Prayer-Time-Display-2.git
-$ https://www.youtube.com/watch?v=TDLKQWsrSyk
-$ 
-```
-
-  
 
 
