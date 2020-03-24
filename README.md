@@ -1,10 +1,9 @@
 # Prayer-Time-Display-2
 
-# PrayerTime Display
 
 PrayerTime Display is a Web app used to display prayertimes on big screen using http://praytimes.org/code. 
 
-# Features
+## Features
 
   - Enter longitude and latitude
   - Select calculation methods
