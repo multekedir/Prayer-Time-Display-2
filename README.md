@@ -16,7 +16,7 @@ PrayerTime Display is a Web app used to display prayertimes on big screen using 
 * [FLask](https://flask.palletsprojects.com/en/1.1.x/quickstart/)  - Python web web framework
 * [Jinja](https://jinja.palletsprojects.com/en/2.11.x/) - templating engine
 * [Pipenv](https://realpython.com/pipenv-guide/) - environment manager
-* Docker](https://docs.docker.com/get-started/) - virtual environment manager
+* [Docker](https://docs.docker.com/get-started/) - virtual environment manager
 
 ### Installation
 
