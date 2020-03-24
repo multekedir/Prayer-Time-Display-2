@@ -1,4 +1,7 @@
-FROM python:3.7
+FROM alpine:latest
+
+RUN apk add --nocache --upgrade bash
+RUN apk add --no-cache python3-dev && pip3 install --upgrade pip
 
 
 WORKDIR /app
@@ -13,7 +16,4 @@ ENV FLASK_APP app.py
 
 EXPOSE 5000
 
-
-
-
-
+ENTRYPOINT ["./run.sh"]
