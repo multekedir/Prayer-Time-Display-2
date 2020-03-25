@@ -35,6 +35,11 @@ PrayerTime Display is a web app used to display prayertimes on big screen using 
     $ docker run -it -d -p 5000:5000 flaskapp
      ```
 
+### Usage 
+1. Open http://127.0.0.1:5000/ in your default browser
+2. To make changes to the location and calculation method go to http://127.0.0.1:5000/admin
+    username: admin
+    password: password
 
 
 
