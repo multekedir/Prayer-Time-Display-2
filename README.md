@@ -1,7 +1,7 @@
 # Prayer-Time-Display-2
 
 
-PrayerTime Display is a Web app used to display prayertimes on big screen using http://praytimes.org/code. 
+PrayerTime Display is a web app used to display prayertimes on big screen using http://praytimes.org/code. 
 
 ## Features
 
@@ -20,7 +20,7 @@ PrayerTime Display is a Web app used to display prayertimes on big screen using 
 ### Installation
  1. Download the app
      ```sh
-    $ git clone https://github.com/multekedir/Prayer-Time-Display-2.git$ 
+    $ git clone https://github.com/multekedir/Prayer-Time-Display-2.git 
     ```
 2. Install Docker -> watch this [vedio](https://www.youtube.com/watch?v=TDLKQWsrSyk)
 3.      
@@ -28,6 +28,15 @@ PrayerTime Display is a Web app used to display prayertimes on big screen using 
     $ cd Prayer-Time-Display-2
     ```
 4. 
+  ```sh
+    $ docker build -t flaskapp:latest .
+ ```
+5. 
+
+ ```sh
+    $ docker run -it -d -p 5000:5000 flaskapp
+ ```
+
 
 
 
