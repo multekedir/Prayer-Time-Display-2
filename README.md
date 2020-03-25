@@ -20,23 +20,20 @@ PrayerTime Display is a web app used to display prayertimes on big screen using 
 ### Installation
  1. Download the app
      ```sh
-    $ git clone https://github.com/multekedir/Prayer-Time-Display-2.git 
+    $ git clone https://github.com/multekedir/Prayer-Time-Display-2.git$ 
     ```
 2. Install Docker -> watch this [vedio](https://www.youtube.com/watch?v=TDLKQWsrSyk)
+
 3.      
     ```sh
     $ cd Prayer-Time-Display-2
     ```
-4. 
-  ```sh
+4. ```sh
     $ docker build -t flaskapp:latest .
- ```
-5. 
-
- ```sh
+     ```
+5. ```sh
     $ docker run -it -d -p 5000:5000 flaskapp
- ```
-
+     ```
 
 
 
