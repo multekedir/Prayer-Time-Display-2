@@ -176,6 +176,10 @@ class Prayer:
         self.new_data_applied = False
         return True
 
+    def update_prayer_data(self):
+        self.update_data(True, "read_from_file")
+        read.build_json()
+
     def get_new_iqama(self):
         """
         read from file and set the adjustment
@@ -257,9 +261,9 @@ class Prayer:
             data = dict(zip(self.timeNames, list(zip(p_times, i_times))))
 
         else:
-            read.get_athan_time()
+            data = read.get_athan_time(date.today())
 
-        
+        print(data)
         return data
 
     def get_difference(self) -> dict:

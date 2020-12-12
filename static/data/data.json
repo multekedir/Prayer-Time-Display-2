@@ -1,1 +1,15 @@
-{"iqama": ["+59", "+20", "+06", "+10", "+0"], "calculation": "Karachi", "dst": 1, "time_zone": -8, "longitude": -122.0, "latitude": 45.0, "read_from_file": false}
+{
+  "iqama": [
+    "+59",
+    "+20",
+    "+06",
+    "+10",
+    "+0"
+  ],
+  "calculation": "Karachi",
+  "dst": 1,
+  "time_zone": -8,
+  "longitude": -122.0,
+  "latitude": 45.0,
+  "read_from_file": false
+}

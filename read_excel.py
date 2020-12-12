@@ -11,15 +11,17 @@ months_short = ('jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul',
                 'aug', 'sep', 'oct', 'nov', 'dec')
 prayer_data = {}
 
+FOLDER_NAME = 'temp'
+
 
 def read_data():
-    with open('./static/data/data.json', 'r') as json_file:
+    with open(f'{FOLDER_NAME}/out.json', 'r') as json_file:
         global prayer_data
         prayer_data = json.load(json_file)
 
 
 def save_json(data):
-    with open('out.json', 'w', encoding='utf-8') as f:
+    with open(f'{FOLDER_NAME}/out.json', 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 
@@ -38,7 +40,7 @@ def get_data_from_excel():
         3         06:21:00  12:15:00  14:22:00  16:40:00  18:09:00
         4         06:21:00  12:16:00  14:22:00  16:41:00  18:10:00
     """
-    file_name = f'prayer_data.xlsx'
+    file_name = f'./static/data/prayer_data.xlsx'
     # print("Reading to excel ........")
     if check_data_from_file(file_name):
         return pd.read_excel(file_name, sheet_name=None)
@@ -62,16 +64,16 @@ def convert_excel_sheets_to_csv():
      Returns:
          true: if secsful
     """
-    # print("Converting to csv ........")
-    try:
-        df = get_data_from_excel()
-        for sheet_names in df.keys():
-            file = f'{sheet_names.lower()}.csv'
-            print(f'saving to {file}')
-            df[sheet_names].to_csv(file)
-        return True
-    except:
-        return False
+    print("Converting to csv ........")
+    # try:
+    df = get_data_from_excel()
+    for sheet_names in df.keys():
+        file = f'{FOLDER_NAME}/{sheet_names.lower()}.csv'
+        print(f'saving to {file}')
+        df[sheet_names].to_csv(file)
+    return True
+    # except:
+    #     return False
 
 
 def create_inner_json_structure(prayer_times):
@@ -140,6 +142,7 @@ def get_athan_time(date):
 
     return prayer_data[current_month][current_day]
 
+
 def build_json():
     """
     Returns (dict):
@@ -154,9 +157,8 @@ def build_json():
     to_json_month = {}
     convert_excel_sheets_to_csv()
     for mon in months_short:
-        file_name = f'{mon}.csv'
 
-        with open(f'{mon}.csv', 'r') as data:
+        with open(f'{FOLDER_NAME}/{mon}.csv', 'r') as data:
 
             csv_reader = list(reader(data))
             i = 0
