@@ -5,6 +5,7 @@ import json
 import pytz
 
 import praytimes as pt
+import read_excel as read
 
 
 # ---------------------- prayTimes Object -----------------------
@@ -22,9 +23,9 @@ class Prayer:
         self.calculation = data['calculation']
         self.daylight_savings = data['dst']
         self.time_zone = data['time_zone']
+        self.read_from_file = data['read_from_file']
         self.prayTimes = pt.PrayTimes(self.calculation)
         self.new_data_applied = True
-
 
     def __str__(self):
 
@@ -119,7 +120,6 @@ class Prayer:
         self.daylight_savings = daylight_savings
         self.prayTimes = pt.PrayTimes(calculation)
 
-
     def get_prayertime(self, prayer):
         """
             get the time of Athan from the prayer_api.py file.
@@ -131,8 +131,10 @@ class Prayer:
             """
         if self.new_data_applied is False:
             self.apply_new_data()
+
         times = self.prayTimes.getTimes(date.today(), (float(self.latitude), float(self.longitude)),
                                         timezone=self.time_zone, dst=self.is_dst('US/Pacific'), format='24h')
+
         return datetime.strptime(times[prayer], "%H:%M").strftime("%I:%M %p")
 
     def save_data(self, func, names, filename, check):
@@ -246,18 +248,18 @@ class Prayer:
         print('*' * 100)
 
     def map_prayer_data(self):
-        difference = self.get_new_iqama()
-        p_times = list(map(self.get_prayertime, self.timeNames))
-        i_times = list(
-            map(self.get_iqama_time, *(self.timeNames, difference)))
-        print('*' * 100)
-        print(self)
-        print("Prayer Times =", p_times)
-        print("Iqama Times =", i_times)
-        print("change =", difference)
-        data = dict(zip(self.timeNames, list(zip(p_times, i_times))))
-        print('Prayer Data = ', data)
-        print('*' * 100)
+        # check if we are reading from a file
+        if not self.read_from_file:
+            difference = self.get_new_iqama()
+            p_times = list(map(self.get_prayertime, self.timeNames))
+            i_times = list(
+                map(self.get_iqama_time, *(self.timeNames, difference)))
+            data = dict(zip(self.timeNames, list(zip(p_times, i_times))))
+
+        else:
+            read.get_athan_time()
+
+        
         return data
 
     def get_difference(self) -> dict:

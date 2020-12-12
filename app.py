@@ -1,17 +1,20 @@
+import os
+
 from flask import Flask, url_for, render_template, request, session, flash, redirect, jsonify
 from flask_caching import Cache
-
+from werkzeug.utils import secure_filename
 import controller as pt
 
+UPLOAD_FOLDER = './static/data'
 app = Flask(__name__)
 app.config.from_envvar('SETTINGS')
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 app.secret_key = b'_5#y2L"F4Q8z\n\xeec]/'
 # Check Configuring Flask-Cache section for more details
 cache = Cache(config={'CACHE_TYPE': 'simple'})
 cache.init_app(app)
 prayer = pt.Prayer()
-
 
 
 @app.route("/", methods=['GET', 'POST'])
@@ -23,7 +26,7 @@ def index():
     return render_template("index.html", data=data)
 
 
-@app.route("/admin",methods=['GET'])
+@app.route("/admin", methods=['GET'])
 def admin():
     if not session.get('logged_in'):
         return render_template("login.html")
@@ -44,6 +47,15 @@ def update_iqama():
     return admin()
 
 
+@app.route('/uploader', methods=['POST'])
+def upload_file():
+    file = request.files['file']
+    if file.filename == '':
+        flash('No file selected for uploading')
+        return admin()
+    else:
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename("prayer_data.xlsx")))
+        return redirect(url_for('index'))
 
 
 @app.route('/update_setup', methods=['POST'])

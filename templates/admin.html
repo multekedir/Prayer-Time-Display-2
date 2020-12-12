@@ -76,8 +76,6 @@
 
                 </br>
 
-
-
                 {%- for message in get_flashed_messages() %}
                     <div class="alert alert-danger fade in">
                         <strong>Error!</strong> {{ message }}
@@ -85,6 +83,22 @@
                 {%- endfor %}
                 <button class="btn btn-primary btn-sm pull-right" type="submit" value="Log in">Submit</button>
             </form>
+            </br>
+            <form class="form-signin" enctype=multipart/form-data method="POST" action="/uploader">
+                <h2 class="form-signin-heading">Upload File</h2>
+                <div class="form-group file-field ">
+                    <div class="btn btn-primary btn-sm float-left form-control">
+                        <input name=file type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                    </div>
+                    <input type=submit value=Upload>
+                </div>
+                 {%- for message in get_flashed_messages() %}
+                    <div class="alert alert-danger fade in">
+                        <strong>Error!</strong> {{ message }}
+                    </div>
+                {%- endfor %}
+            </form>
+
         </main>
     {% else %}
         <h1> hello</h1>
