@@ -7,7 +7,6 @@ months = ('january', 'february', 'march', 'april', 'may', 'june', 'july',
           'august', 'september', 'october', 'november', 'december')
 
 months_short = ('jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul',
-
                 'aug', 'sep', 'oct', 'nov', 'dec')
 prayer_data = {}
 
@@ -15,9 +14,17 @@ FOLDER_NAME = 'temp'
 
 
 def read_data():
-    with open(f'{FOLDER_NAME}/out.json', 'r') as json_file:
-        global prayer_data
-        prayer_data = json.load(json_file)
+    global prayer_data
+    try:
+        with open(f'{FOLDER_NAME}/out.json', 'r') as json_file:
+            prayer_data = json.load(json_file)
+    except FileNotFoundError:
+        build_json()
+        with open(f'{FOLDER_NAME}/out.json', 'r') as json_file:
+            prayer_data = json.load(json_file)
+    finally:
+        return True
+    return False
 
 
 def save_json(data):
@@ -104,42 +111,29 @@ def create_inner_json_structure(prayer_times):
                     Attah: string,
                 },
     """
+    print(f'Inner{prayer_times}')
     prayer_with_times = \
         {
-            "fajr": {
-                "Iqamah": prayer_times[0][0],
-                "Athan": prayer_times[0][1],
-            },
+            "fajr": (prayer_times[2][1], prayer_times[0][0]),
             "sunrise": prayer_times[1][0],
-            "zuhr": {
-                "Iqamah": prayer_times[2][0],
-                "Attah": prayer_times[2][1],
-            },
-            "asr": {
-                "Iqamah": prayer_times[3][0],
-                "Attah": prayer_times[3][1],
-            },
-            "maghrib": {
-                "Iqamah": prayer_times[4][0],
-                "Attah": prayer_times[4][1],
-            },
-            "isha": {
-                "Iqamah": prayer_times[5][0],
-                "Attah": prayer_times[5][1],
-            }
+            "dhuhr": (prayer_times[2][1], prayer_times[2][0]),
+            "asr": (prayer_times[3][1], prayer_times[3][0]),
+            "maghrib": (prayer_times[4][1], prayer_times[4][0]),
+            "isha": (prayer_times[5][1], prayer_times[5][0])
         }
     return prayer_with_times
 
 
 def get_athan_time(date):
     current_month = date.strftime("%b").lower()
-    current_day = int(date.strftime("%d"))
+    current_day = date.strftime("%d")
 
     # check if data is loaded
     global prayer_data
     if not prayer_data:
+        print("Getting new reading")
         read_data()
-
+    print(prayer_data)
     return prayer_data[current_month][current_day]
 
 
@@ -158,21 +152,20 @@ def build_json():
     convert_excel_sheets_to_csv()
     for mon in months_short:
 
-        with open(f'{FOLDER_NAME}/{mon}.csv', 'r') as data:
+        with open(f'{FOLDER_NAME}/{mon}.csv', 'r') as csvfile:
 
-            csv_reader = list(reader(data))
+            csv_reader = list(reader(csvfile))
             i = 0
 
             # print(f'Reading from {file_name} line number {len(csv_reader)}')
             obj = {}
             for i in range(2, len(csv_reader)):
-                inner_structure = create_inner_json_structure([(csv_reader[i][3], csv_reader[i][2]),
-                                                               (csv_reader[i][4]),
-                                                               (csv_reader[i][6], csv_reader[i][5]),
-                                                               (csv_reader[i][8], csv_reader[i][7]),
-                                                               (csv_reader[i][10], csv_reader[i][9]),
-                                                               (csv_reader[i][12], csv_reader[i][11])])
-
+                inner_structure = {"fajr": (csv_reader[i][3], csv_reader[i][4]),
+                                   "sunrise": (csv_reader[i][5]),
+                                   "dhuhr": (csv_reader[i][6], csv_reader[i][7]),
+                                   "asr": (csv_reader[i][8], csv_reader[i][9]),
+                                   "maghrib": (csv_reader[i][10], csv_reader[i][11]),
+                                   "isha": (csv_reader[i][12], csv_reader[i][13])}
                 number_date = int(csv_reader[i][0])
                 # transform date from "1-Dec-20" to 1
                 # number_date = int(datetime.strme(csv_reader[i][0], '%d-%b-%y').strftime("%d"))

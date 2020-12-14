@@ -259,9 +259,10 @@ class Prayer:
             i_times = list(
                 map(self.get_iqama_time, *(self.timeNames, difference)))
             data = dict(zip(self.timeNames, list(zip(p_times, i_times))))
-
+            print("Reading from API")
         else:
             data = read.get_athan_time(date.today())
+            print("Reading from file")
 
         print(data)
         return data
