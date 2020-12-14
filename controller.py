@@ -168,7 +168,6 @@ class Prayer:
         """
         current = self.read_data()
         current[key] = data
-        print(current)
         with open('./static/data/data.json', 'w') as outfile:
             json.dump(current, outfile)
 
@@ -176,8 +175,9 @@ class Prayer:
         self.new_data_applied = False
         return True
 
-    def update_prayer_data(self):
+    def change_prayer_data(self):
         self.update_data(True, "read_from_file")
+        self.read_from_file = True
         read.build_json()
 
     def get_new_iqama(self):

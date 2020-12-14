@@ -55,7 +55,7 @@ def upload_file():
         return admin()
     else:
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename("prayer_data.xlsx")))
-        prayer.update_prayer_data();
+        prayer.change_prayer_data()
         return redirect(url_for('index'))
 
 
