@@ -1,16 +1,14 @@
-FROM alpine:latest
-
-RUN apk add --nocache --upgrade bash
-RUN apk add --no-cache python3-dev && pip3 install --upgrade pip
-
+FROM python:3.8
+RUN pip install pipenv
 
 WORKDIR /app
 COPY . /app
-RUN pip install pipenv
 COPY Pipfile* /tmp/
+
 RUN cd /tmp && pipenv lock --requirements > requirements.txt
 RUN pip install -r /tmp/requirements.txt
 
+RUN pip install -r /tmp/requirements.txt
 
 ENV FLASK_APP app.py
 
