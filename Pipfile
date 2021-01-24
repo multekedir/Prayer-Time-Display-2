@@ -12,6 +12,8 @@ pytz = "*"
 pandas = "*"
 panda = "*"
 xlrd = "==1.2.0"
+cloudsafe = "*"
+pyqt5 = "*"
 
 [requires]
 python_version = "3.8"
