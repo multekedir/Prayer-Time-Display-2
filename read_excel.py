@@ -1,10 +1,8 @@
-import pandas as pd
-from datetime import datetime
-from csv import reader
 import json
+from csv import reader
+from datetime import datetime
 
-
-
+import pandas as pd
 
 months = ('january', 'february', 'march', 'april', 'may', 'june', 'july',
           'august', 'september', 'october', 'november', 'december')
@@ -46,9 +44,6 @@ def get_data_from_excel():
     """
     Reads excel data from file.
 
-    Parameters:
-        data (str): which prayer data athan or iqama
-
     Returns:
         DataFrame: prayer data
         Date      Fajr      Zuhr       Asr      Maghrib    Isha
@@ -58,7 +53,7 @@ def get_data_from_excel():
         4         06:21:00  12:16:00  14:22:00  16:41:00  18:10:00
     """
     file_name = f'./static/data/prayer_data.xlsx'
-    # print("Reading to excel ........")
+    print("Reading to excel ........")
     if check_data_from_file(file_name):
         return pd.read_excel(file_name, sheet_name=None)
     return None
@@ -95,15 +90,23 @@ def convert_excel_sheets_to_csv():
 
 def get_athan_time(date):
     current_month = date.strftime("%b").lower()
-    current_day = date.strftime("%d")
+    current_day = date.strftime("%d").lstrip('0')
 
     # check if data is loaded
     global prayer_data
     if not prayer_data:
-        print("Getting new reading")
-        read_data()
-    print(prayer_data)
-    return prayer_data[current_month][current_day]
+        print("Getting new reading from file")
+        if not read_data():
+            return None
+    try:
+        out = prayer_data[current_month][current_day]
+        print(f"Current Month {current_month} Day: {current_day}")
+        print(f"Current Month data {prayer_data[current_month]}")
+    except KeyError:
+        print("ERROR while parsing the file. Please look at the template")
+        return None
+
+    return out
 
 
 def create_inner_structure(pt_list):

@@ -1,7 +1,7 @@
+import json
 import re
 from datetime import date, datetime, timedelta
 
-import json
 import pytz
 
 import praytimes as pt
@@ -9,6 +9,8 @@ import read_excel as read
 
 
 # ---------------------- prayTimes Object -----------------------
+
+
 class Prayer:
     """
 
@@ -44,7 +46,7 @@ class Prayer:
 
     @staticmethod
     def read_data():
-        with open('./static/data/data.json', 'r') as json_file:
+        with open('./static/data/data.json', 'r', encoding="utf8") as json_file:
             data = json.load(json_file)
         return dict(data)
 
@@ -126,11 +128,8 @@ class Prayer:
             Location is set to Eugene,OR. Can be changed by
             adjusting the long, lat and elevation.
             :param prayer: enter a prayer from one the list [fajr, sunrise, dhuhr, asr, maghrib, isha]
-            :param format : adjust time format in '12h' or '24h'
             :return: Time of prayer
             """
-        if self.new_data_applied is False:
-            self.apply_new_data()
 
         times = self.prayTimes.getTimes(date.today(), (float(self.latitude), float(self.longitude)),
                                         timezone=self.time_zone, dst=self.is_dst('US/Pacific'), format='24h')
@@ -158,17 +157,14 @@ class Prayer:
 
     def update_data(self, data, key):
         """
-        collects the nessarey data from user and save the changes.
+        collects the necessary data from user and save the changes.
 
-        :param func: data function
-        :param names: prayer time names
-        :param filename: name of file you want to change
-        :param check: True if file need to be validated
+
         :return: True if file is saves
         """
         current = self.read_data()
         current[key] = data
-        with open('./static/data/data.json', 'w') as outfile:
+        with open('./static/data/data.json', 'w', encoding="utf8") as outfile:
             json.dump(current, outfile)
 
         self.prayTimes = pt.PrayTimes(self.calculation)
@@ -204,12 +200,15 @@ class Prayer:
         return datetime.strftime((date_time_obj + timedelta(minutes=difference)), "%I:%M %p")
 
     def apply_new_data(self):
+        print("Applying new values ....")
         data = self.read_data()
         self.longitude = data['longitude']
         self.latitude = data['latitude']
         self.calculation = data['calculation']
         self.daylight_savings = data['dst']
         self.time_zone = data['time_zone']
+        self.read_from_file = data['read_from_file']
+        self.prayTimes = pt.PrayTimes(self.calculation)
 
         self.new_data_applied = True
 
@@ -251,17 +250,28 @@ class Prayer:
         print("Prayer zone =", self.time_zone)
         print('*' * 100)
 
-    def map_prayer_data(self):
+    def map_prayer_data(self, include_tomorrow=False):
         # check if we are reading from a file
+        tomorrow = None
+        if self.new_data_applied is False:
+            self.apply_new_data()
         if not self.read_from_file:
             difference = self.get_new_iqama()
             p_times = list(map(self.get_prayertime, self.timeNames))
             i_times = list(
                 map(self.get_iqama_time, *(self.timeNames, difference)))
-            data = dict(zip(self.timeNames, list(zip(p_times, i_times))))
+            today = dict(zip(self.timeNames, list(zip(p_times, i_times))))
+            if include_tomorrow:
+                tomorrow = dict(zip(self.timeNames, list(zip(p_times, i_times))))
+            data = {'tomorrow': tomorrow,
+                    'today': today}
             print("Reading from API")
         else:
-            data = read.get_athan_time(date.today())
+            if include_tomorrow:
+                tomorrow = read.get_athan_time(date.today() + timedelta(days=1))
+            data = {'tomorrow': tomorrow,
+                    'today': read.get_athan_time(date.today())}
+
             print("Reading from file")
 
         print(data)

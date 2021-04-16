@@ -6,29 +6,40 @@
 
 
 {% block main %}
-<main>
-    {{ prayer_table() }}
-{#    <div class="slideshow-container">#}
-{##}
-{#        <div class="mySlides fade">#}
-{#            <img src="{{ url_for('static', filename='images/full.jpg') }}">#}
-{#        </div>#}
-{##}
-{#        <div class="mySlides fade">#}
-{#            <img src="{{ url_for('static', filename='images/concert_poster.png') }}">#}
-{#        </div>#}
-{##}
-{#        <div class="mySlides fade">#}
-{#            {{ prayer_table() }}#}
-{#        </div>#}
-{#        #}
-{#    </div>#}
+    <main>
+        <header class="text-center">
+            <div class="pull-right">
+                {% if session['logged_in'] %}
+                    <strong>Logged in as an admin</strong>
+                    <a class="btn btn-primary btn-sm button" href="{{ url_for('logout') }}"> logout</a>
+                {% endif %}
+            </div>
+            <h1>{{ payload['header_1'] }} </h1>
+            <h1>{{ payload['header_2'] }} َ</h1>
+            <h1>{{ payload['header_3'] }} </h1>
+        </header>
+        {{ prayer_table() }}
+        {#    <div class="slideshow-container">#}
+        {##}
+        {#        <div class="mySlides fade">#}
+        {#            <img src="{{ url_for('static', filename='images/full.jpg') }}">#}
+        {#        </div>#}
+        {##}
+        {#        <div class="mySlides fade">#}
+        {#            <img src="{{ url_for('static', filename='images/concert_poster.png') }}">#}
+        {#        </div>#}
+        {##}
+        {#        <div class="mySlides fade">#}
+        {#            {{ prayer_table() }}#}
+        {#        </div>#}
+        {#        #}
+        {#    </div>#}
 
-    
-</main>
+
+    </main>
 {% endblock %}
 
 {% block script %}
     <!--static js files static/js/-->
-    <script defer src="{{ url_for('static', filename='js/home.js') }}"></script>
+    {#    <script defer src="{{ url_for('static', filename='js/home.js') }}"></script>#}
 {% endblock %}

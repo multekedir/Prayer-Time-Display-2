@@ -3,6 +3,7 @@ import os
 from flask import Flask, url_for, render_template, request, session, flash, redirect, jsonify
 from flask_caching import Cache
 from werkzeug.utils import secure_filename
+
 import controller as pt
 
 UPLOAD_FOLDER = './static/data'
@@ -23,7 +24,7 @@ def index():
     data = prayer.map_prayer_data()
     if request.method == 'POST':
         return jsonify(data)
-    return render_template("index.html", data=data)
+    return render_template("index.html", data=data, payload=prayer.read_data())
 
 
 @app.route("/admin", methods=['GET'])
@@ -43,7 +44,7 @@ def update_iqama():
         prayer.update_data(payload, 'iqama')
         return redirect(url_for('index'))
     else:
-        flash("Please use HH:MM AM/PM or +59 format")
+        flash(u"Please use HH:MM AM/PM or +59 format", "update_iqama")
     return admin()
 
 
@@ -65,6 +66,15 @@ def do_setup():
     prayer.update_data(float(request.form.get('latitude')), 'latitude')
     prayer.update_data(float(request.form.get('longitude')), 'longitude')
     prayer.update_data(int(request.form.get('time_zone')), 'time_zone')
+    return redirect(url_for('index'))
+
+
+@app.route('/change_header', methods=['POST'])
+def do_header():
+    prayer.update_data(request.form.get('header_1'), 'header_1')
+    prayer.update_data(request.form.get('header_2'), 'header_2')
+    prayer.update_data(request.form.get('header_3'), 'header_3')
+    prayer.update_data(request.form.get('disable_api') == "on", 'read_from_file')
     return redirect(url_for('index'))
 
 

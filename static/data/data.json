@@ -1,1 +1,18 @@
-{"iqama": ["+59", "+20", "+06", "+10", "+0"], "calculation": "Karachi", "dst": 1, "time_zone": -8, "longitude": -122.0, "latitude": 45.0, "read_from_file": true}
+{
+  "iqama": [
+    "+59",
+    "+20",
+    "+06",
+    "+10",
+    "+0"
+  ],
+  "calculation": "Karachi",
+  "dst": 1,
+  "time_zone": -8,
+  "longitude": -122.0,
+  "latitude": 45.0,
+  "read_from_file": true,
+  "header_1": "\u0633\u0652\u0645\u0650 \u0627\u0644\u0644\u06c1\u0650 \u0627\u0644\u0631\u0651\u064e\u062d\u0652\u0645\u0670\u0646\u0650 \u0627\u0644\u0631\u0651\u064e\u062d\u0650\u06cc\u0652",
+  "header_2": "\u0631\u0645\u0636\u0627\u0646 \u0643\u0631\u064a\u0645",
+  "header_3": "O Lord, forgive my sins and open the doors of mercy for me"
+}
